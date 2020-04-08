@@ -115,6 +115,7 @@ const sgnout=()=>{
       'userId':localStorage.getItem("user"),
       'confess': val.message
     }
+    console.log(JSON.stringify(data))
     fetch(process.env.REACT_APP_BASEURL+"api/user/addConfession/"+props.match.params.userid, {
       method: 'POST', // 'GET', 'PUT', 'DELETE', etc.
       body: JSON.stringify(data),

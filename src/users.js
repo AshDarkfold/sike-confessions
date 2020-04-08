@@ -41,7 +41,6 @@ useEffect(() => {
           'userID':data.userId
         })
         newConfs(data.confessions)
-        console.log(sameuser, currentData, confs)
         props.history.push("/user/"+data.userId)
       })
     }else{
@@ -59,7 +58,6 @@ useEffect(() => {
           'bio':data.bio,
         })
         newConfs(null)
-        console.log(sameuser, currentData, confs)
       })
     }
   }

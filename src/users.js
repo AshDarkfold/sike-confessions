@@ -21,39 +21,10 @@ const Users = (props) => {
 const [sameuser, setuser] = useState(false)
 const [currentData, newcurrData] = useState([])
 const [confs, newConfs] = useState([])
+const { currentUser } = useContext(AuthContext);
 
-
-  // const gauth = useCallback(
-  //   async event => {
-  //     event.preventDefault();
-  //     try {
-  //       await app
-  //         .auth()
-  //         .signInWithPopup(provider).then(function(result) {
-  //           // This gives you a Google Access Token. You can use it to access the Google API.
-  //           var token = result.credential.accessToken;
-  //           console.log(token)
-  //           // The signed-in user info.
-  //           var user = result.user;
-  //           console.log(user)
-  //           // ...
-  //         }).catch(function(error) {
-  //           // Handle Errors here.
-  //           console.log(error)
-  //           // ...
-  //         });
-  //       // history.push("/");
-  //     } catch (error) {
-  //       // alert(error);
-  //       console.log(error)
-  //     }
-  //   },
-  //   [props.history]
-  // );
-
-  const { currentUser } = useContext(AuthContext);
 useEffect(() => {
-  if (localStorage.getItem("token")) {
+  if (currentUser){
     if(localStorage.getItem("user") === props.match.params.userid){
       setuser(true)
       fetch(process.env.REACT_APP_BASEURL+"api/user/getmydata",{
@@ -71,7 +42,7 @@ useEffect(() => {
         })
         newConfs(data.confessions)
         console.log(sameuser, currentData, confs)
-
+        props.history.push("/user/"+data.userId)
       })
     }else{
       setuser(false)
@@ -96,7 +67,7 @@ useEffect(() => {
       props.history.push("/")
     }
 
-}, [currentUser, props, sameuser, confs, currentData])
+}, [currentUser, props, props.history, props.match.params, sameuser, confs, currentData])
  
 // console.log(props.match.params.userid)
 // console.log(sameuser)

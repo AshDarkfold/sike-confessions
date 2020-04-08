@@ -62,6 +62,7 @@ useEffect(() => {
       })
       .then(response => response.json())
       .then(data =>{
+        console.log(data)
         newcurrData({
           'name':data.name,
           'bio':data.bio,

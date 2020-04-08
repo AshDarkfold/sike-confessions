@@ -119,6 +119,9 @@ const sgnout=()=>{
     fetch(process.env.REACT_APP_BASEURL+"api/user/addConfession/"+props.match.params.userid, {
       method: 'POST', // 'GET', 'PUT', 'DELETE', etc.
       body: JSON.stringify(data),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+        })
       // token: localStorage.getItem("token")
     })
     .then(response => response.json())

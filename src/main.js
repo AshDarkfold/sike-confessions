@@ -103,6 +103,9 @@ useEffect(() => {
     // console.log(currentUser)
     setCurr(currentUser.uid)
   }
+  if(localStorage.getItem("user")){
+    setUser(localStorage.getItem("user"))
+  }
   // const fetchData = async() =>{
   //   const db = app.firestore()
   //   const data = await db.collection("users").get()

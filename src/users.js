@@ -1,31 +1,130 @@
-import React from 'react';
+import React,{useContext, useCallback, useState, useEffect}  from 'react';
 import { Layout, Menu, Row, Col, Card, Form, Input, Button  } from 'antd';
 import {
   UserOutlined,
   HomeTwoTone,
 } from '@ant-design/icons';
 import {NavLink} from 'react-router-dom';
+import firebase from "firebase/app";
+import 'firebase/auth';
+import {AuthContext} from './auth';
+import app from "./base.js";
+
+var provider = new firebase.auth.GoogleAuthProvider();
+provider.addScope('profile');
+provider.addScope('email');
 
 const { Header, Footer, Content } = Layout;
 
-class Users extends React.Component {
-constructor(props){
-    super(props);
-    this.state={
-        collapsed: true,
-    }
-    console.log(props)
-}
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
-  onFinish=(val)=>{
-      console.log(val)
-  }
+const Users = (props) => {
+const [sameuser, setuser] = useState(false)
+const [currentData, newcurrData] = useState([])
+const [confs, newConfs] = useState([])
 
-  render() {
+
+  // const gauth = useCallback(
+  //   async event => {
+  //     event.preventDefault();
+  //     try {
+  //       await app
+  //         .auth()
+  //         .signInWithPopup(provider).then(function(result) {
+  //           // This gives you a Google Access Token. You can use it to access the Google API.
+  //           var token = result.credential.accessToken;
+  //           console.log(token)
+  //           // The signed-in user info.
+  //           var user = result.user;
+  //           console.log(user)
+  //           // ...
+  //         }).catch(function(error) {
+  //           // Handle Errors here.
+  //           console.log(error)
+  //           // ...
+  //         });
+  //       // history.push("/");
+  //     } catch (error) {
+  //       // alert(error);
+  //       console.log(error)
+  //     }
+  //   },
+  //   [props.history]
+  // );
+
+  const { currentUser } = useContext(AuthContext);
+useEffect(() => {
+  if (currentUser) {
+    if(localStorage.getItem("user") === props.match.params.userid){
+      setuser(true)
+      fetch(process.env.REACT_APP_BASEURL+"api/user/getmydata",{
+        headers: new Headers({
+          token: localStorage.getItem("token") 
+        })
+      })
+      .then(response => response.json())
+      .then(data =>{
+        newcurrData({
+          'name':data.name,
+          'bio':data.bio,
+          'userID':data.userId
+        })
+        newConfs(data.confess)
+        console.log(sameuser, currentData, confs)
+
+      })
+    }else{
+      setuser(false)
+      fetch(process.env.REACT_APP_BASEURL+"api/user/gethisdata/"+props.match.params.userid,{
+        headers: new Headers({
+          token: localStorage.getItem("token") 
+        })
+      })
+      .then(response => response.json())
+      .then(data =>{
+        newcurrData({
+          'name':data.name,
+          'bio':data.bio,
+        })
+        newConfs(null)
+        console.log(sameuser, currentData, confs)
+      })
+    }
+  }
+  else{
+      props.history.push('/')
+    }
+
+}, [currentUser, props.match.params.userid, props.history, sameuser])
+ 
+// console.log(props.match.params.userid)
+// console.log(sameuser)
+
+const sgnout=()=>{
+  app.auth().signOut().then(function() {
+    // Sign-out successful.
+    props.history.push("/")
+  }).catch(function(error) {
+    // An error happened.
+  });
+}
+
+ const onFinish=(val)=>{
+  if(val){
+    let data = {
+      'userId':localStorage.getItem("user"),
+      'confess': val.message
+    }
+    fetch(process.env.REACT_APP_BASEURL+"api/user/addConfession/"+props.match.params.userid, {
+      method: 'POST', // 'GET', 'PUT', 'DELETE', etc.
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data=>{
+      console.log(data)
+    })
+    .catch(error=> console.error(error))
+  }
+}
+
     return (
       <Layout>
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
@@ -40,15 +139,19 @@ constructor(props){
                     <UserOutlined />
                     <span>Profile</span>
                 </Menu.Item>
+                <Menu.Item key="4">
+                    <Button type="dashed" onClick={sgnout}>Sign out</Button>
+                </Menu.Item>
             </Menu>
         </Header>
         <Content
             style={{ padding: '114px 50px 0px 50px' }}
           >
           <div className="site-layout-content">
-            <h1>Joe Goldberg's Profile</h1>
+            <h1>{currentData.name}'s Profile</h1>
+            <p>{currentData.bio}</p>
             <div className='conf-cont'>
-                <Form onFinish={this.onFinish} name="conf-form">
+                <Form onFinish={onFinish} name="conf-form">
                     <Form.Item name="message" rules={[{
                         max: 100,
                         message: 'maximum 100 characters only!'
@@ -76,6 +179,5 @@ constructor(props){
         </Layout>
     );
   }
-}
 
 export default Users

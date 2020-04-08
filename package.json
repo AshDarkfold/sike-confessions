@@ -7,10 +7,13 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "antd": "^4.1.1",
+    "firebase": "^7.13.2",
     "react": "^16.13.1",
     "react-alert": "^7.0.0",
     "react-alert-template-basic": "^1.0.0",
     "react-dom": "^16.13.1",
+    "react-firebaseui": "^4.1.0",
+    "react-recaptcha-v3": "^1.1.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1"
   },

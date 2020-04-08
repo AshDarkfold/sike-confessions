@@ -1,29 +1,120 @@
-import React from 'react';
-import { Layout, Menu, Row, Col, Card } from 'antd';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
+import { Layout, Menu, Row, Col, Card, Button } from 'antd';
 import {
   UserOutlined,
   HomeTwoTone,
 } from '@ant-design/icons';
 import {NavLink} from 'react-router-dom';
+import {AuthContext} from './auth';
+import app from "./base.js";
+import firebase from "firebase/app";
+import 'firebase/auth';
+import 'firebase/firestore';
+import { ReCaptcha } from 'react-recaptcha-v3';
 
 
-const { Header,  Footer, Content } = Layout;
 
-class SiderDemo extends React.Component {
-constructor(props){
-    super(props);
-    this.state={
-        collapsed: true,
-        selectedmenu: '1'
-    }
-}
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
 
-  render() {
+
+const SiderDemo =(props)=> {
+  const [currUser, setCurr] = useState(null)
+  const [user1, setUser] = useState([])
+  const [recaptok, setrecapTok] = useState(null)
+
+  const verifyCallback = (recaptchaToken) => {
+    // Here you will get the final recaptchaToken!!!  
+    // console.log(recaptchaToken, "<= your recaptcha token")
+    setrecapTok(recaptchaToken);
+  }
+  
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('profile');
+  provider.addScope('email');
+
+  const { Header,  Footer, Content } = Layout;
+
+
+
+  const gauth = useCallback(
+    async event => {
+      event.preventDefault();
+      try {
+        await app
+          .auth()
+          .signInWithPopup(provider).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            console.log(token)
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user)
+            let values = {
+              "name":user.displayName,
+              "email":user.email
+            }
+            fetch(process.env.REACT_APP_BASEURL+"api/user/login", {
+            method: 'POST', // 'GET', 'PUT', 'DELETE', etc.
+            body: JSON.stringify(values), // Coordinate the body type with 'Content-Type'
+            headers: new Headers({
+            'Content-Type': 'application/json',
+            'g-recaptcha-response': setrecapTok
+            }),
+        }).then(response => {
+            if(response.status === 200 || response.status===201 || response.status===202){
+                return response.json();
+            }else{
+                // console.log(response)
+                if(response.code===406){
+                    alert("Recaptcha not verified. Try again later")
+                }
+            }
+            })
+            .then(data => {
+                console.log(data)
+                setUser(data.userId)
+                localStorage.setItem("token", data.User.token);
+                localStorage.setItem('user', data.userId)
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+            // ...
+          }).catch(function(error) {
+            // Handle Errors here.
+            console.log(error)
+            // ...
+          });
+        // history.push("/");
+      } catch (error) {
+        // alert(error);
+        console.log(error)
+      }
+    },
+    [alert, provider]
+  );
+
+
+const { currentUser } = useContext(AuthContext);
+
+useEffect(() => {
+  if (currentUser) {
+    // return <Redirect to="/" />;
+    // console.log(currentUser)
+    setCurr(currentUser.uid)
+  }
+  // const fetchData = async() =>{
+  //   const db = app.firestore()
+  //   const data = await db.collection("users").get()
+  //   setUsers(data.docs.map(doc=>doc.data()))
+  //   console.log(users)
+  // }
+  // fetchData()
+},[currentUser])
+    
+
+ 
+
     return (
       <Layout className="layout">
           <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
@@ -33,10 +124,13 @@ constructor(props){
                 <span>SiKe</span>
                 </Menu.Item>
                 <Menu.Item key="2">
-                <NavLink to="/user/">
+                <NavLink to={'/user/'+user1}>
                     <UserOutlined />
                     <span>Profile</span>
                 </NavLink>
+                </Menu.Item>
+                <Menu.Item key="3">
+                    <Button type="dashed" onClick={gauth}>Login with G</Button>
                 </Menu.Item>
             </Menu>
         </Header>
@@ -84,9 +178,13 @@ constructor(props){
            
           </Content>
           <Footer style={{ textAlign: 'center' }}>Sike Confessions 2020</Footer>
+          <ReCaptcha
+                    sitekey="6Lc2lOcUAAAAAM6XhdDHUpSoNG1065CW_SiO0lix"
+                    action='/'
+                    verifyCallback={verifyCallback}
+                />
         </Layout>
     );
   }
-}
 
 export default SiderDemo

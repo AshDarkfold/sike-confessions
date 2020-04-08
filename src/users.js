@@ -68,7 +68,7 @@ useEffect(() => {
           'bio':data.bio,
           'userID':data.userId
         })
-        newConfs(data.confess)
+        newConfs(data.confessions)
         console.log(sameuser, currentData, confs)
 
       })

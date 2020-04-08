@@ -17,14 +17,13 @@ import { ReCaptcha } from 'react-recaptcha-v3';
 
 
 const SiderDemo =(props)=> {
-  const [currUser, setCurr] = useState(null)
-  const [user1, setUser] = useState(null)
-  const [recaptok, setrecapTok] = useState(null)
-  const [logbtnval, setlogbtn] = useState("Login")
-  const [day, setDay] = useState(null)
-  const [hour, setHour] = useState(null)
-  const [min, setMin] = useState(null)
-  const [sec, setSec] = useState(null)
+  const [user1, setUser] = useState(null);
+  const [recaptok, setrecapTok] = useState(null);
+  const [logbtnval, setlogbtn] = useState("Login");
+  const [day, setDay] = useState(null);
+  const [hour, setHour] = useState(null);
+  const [min, setMin] = useState(null);
+  const [sec, setSec] = useState(null);
 
   const verifyCallback = (recaptchaToken) => {
     // Here you will get the final recaptchaToken!!!  
@@ -92,8 +91,7 @@ const SiderDemo =(props)=> {
                 localStorage.setItem('user', data.userId);
                 localStorage.setItem("name", data.name)
                 setlogbtn("Hey "+data.name)
-
-
+                props.history.push("/user/"+data.userId)
             })
             .catch(error => {
                 console.log(error);
@@ -117,11 +115,6 @@ const SiderDemo =(props)=> {
 const { currentUser } = useContext(AuthContext);
 
 useEffect(() => {
-  if (currentUser) {
-    // return <Redirect to="/" />;
-    // console.log(currentUser)
-    setCurr(currentUser.uid)
-  }
   if(localStorage.getItem("user")){
     setUser(localStorage.getItem("user"))
   }
@@ -130,13 +123,12 @@ useEffect(() => {
   }else{
     setlogbtn("Login")
   }
+  // setInterval(() => {
+  //   showDate("April 14 2020 15:00:00 GMT+0530");
+  // }, 1000);
+},[user1])
+ 
 
-  setInterval(() => {
-    showDate("April 14 2020 15:00:00 GMT+0530");
-}, 1000);
-
-},[currentUser, user1])
-    
 
 const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7']
 

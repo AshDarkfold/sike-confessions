@@ -18,8 +18,13 @@ import { ReCaptcha } from 'react-recaptcha-v3';
 
 const SiderDemo =(props)=> {
   const [currUser, setCurr] = useState(null)
-  const [user1, setUser] = useState([])
+  const [user1, setUser] = useState(null)
   const [recaptok, setrecapTok] = useState(null)
+  const [logbtnval, setlogbtn] = useState("Login")
+  const [day, setDay] = useState(null)
+  const [hour, setHour] = useState(null)
+  const [min, setMin] = useState(null)
+  const [sec, setSec] = useState(null)
 
   const verifyCallback = (recaptchaToken) => {
     // Here you will get the final recaptchaToken!!!  
@@ -33,7 +38,18 @@ const SiderDemo =(props)=> {
 
   const { Header,  Footer, Content } = Layout;
 
-
+  const showDate=(endtime)=>{
+    var t = Date.parse(endtime) - Date.parse(new Date());
+    var seconds = Math.floor( (t/1000) % 60 );
+    var minutes = Math.floor( (t/1000/60) % 60 );
+    var hours = Math.floor( (t/(1000*60*60)) % 24 );
+    var days = Math.floor( t/(1000*60*60*24) );
+    
+    setDay(days)
+    setHour(hours)
+    setMin(minutes)
+    setSec(seconds)
+  } 
 
   const gauth = useCallback(
     async event => {
@@ -73,7 +89,10 @@ const SiderDemo =(props)=> {
                 console.log(data)
                 setUser(data.userId)
                 localStorage.setItem("token", data.Token);
-                localStorage.setItem('user', data.userId)
+                localStorage.setItem('user', data.userId);
+                localStorage.setItem("name", data.name)
+                setlogbtn("Hey "+data.name)
+
 
             })
             .catch(error => {
@@ -106,17 +125,20 @@ useEffect(() => {
   if(localStorage.getItem("user")){
     setUser(localStorage.getItem("user"))
   }
-  // const fetchData = async() =>{
-  //   const db = app.firestore()
-  //   const data = await db.collection("users").get()
-  //   setUsers(data.docs.map(doc=>doc.data()))
-  //   console.log(users)
-  // }
-  // fetchData()
-},[currentUser])
+  if(user1){
+    setlogbtn("Hey "+localStorage.getItem("name"))
+  }else{
+    setlogbtn("Login")
+  }
+
+  setInterval(() => {
+    showDate("April 14 2020 15:00:00 GMT+0530");
+}, 1000);
+
+},[currentUser, user1])
     
 
- 
+const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7']
 
     return (
       <Layout className="layout">
@@ -132,13 +154,10 @@ useEffect(() => {
                     <span>Profile</span>
                 </NavLink>
                 </Menu.Item>
-                <Menu.Item key="3">
-                    <Button type="dashed" onClick={gauth}>Login with G</Button>
-                </Menu.Item>
             </Menu>
+            <Button className="loginbutton" type="dashed" onClick={gauth} >{logbtnval}</Button>
         </Header>
           <Content
-            style={{ padding: '114px 50px 0px 50px' }}
           >
           <div className="site-layout-content">
           <h1>SiKe Confessions</h1>
@@ -148,39 +167,41 @@ useEffect(() => {
             <div className="conf-cards">
                 <Row gutter={16}>
                     <Col xs={20} sm={16} md={12} lg={8} xl={6}>
-                    <Card title="Default size card">
-                        <p>Card content</p>
-                        <p>Card content</p>
-                        <p>Card content</p>
+                    <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
+                        <p>Hey I think you're great! Hope we could talk more!</p>
                     </Card>
                     </Col>
                     <Col xs={20} sm={16} md={12} lg={8} xl={6}>
-                    <Card title="Default size card">
-                        <p>Card content</p>
-                        <p>Card content</p>
-                        <p>Card content</p>
+                    <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
+                        <p>I really dont like how you treated me in high school!</p>
                     </Card>
                     </Col>
                     <Col xs={20} sm={16} md={12} lg={8} xl={6}>
-                    <Card title="Default size card">
-                        <p>Card content</p>
-                        <p>Card content</p>
-                        <p>Card content</p>
+                    <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
+                        <p>Samantha you're a bitch</p>
                     </Card>
                     </Col>
                     <Col xs={20} sm={16} md={12} lg={8} xl={6}>
-                    <Card title="Default size card">
-                        <p>Card content</p>
-                        <p>Card content</p>
-                        <p>Card content</p>
+                    <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
+                        <p>I don't know how to start talking to you, your so pretty!</p>
                     </Card>
                     </Col>
+                    <Col xs={20} sm={16} md={12} lg={8} xl={6}>
+                    <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
+                      <h3>Time until the BIG giveaway! </h3>
+                      <p>Days: {day}</p>
+                      <p>, Hours: {hour}</p>
+                      <p>, Minutes: {min}</p>
+                      <p>, Seconds: {sec}</p>
+                    </Card>
+                    </Col>
+   
                 </Row>
             </div>
           </div>
            
           </Content>
-          <Footer style={{ textAlign: 'center' }}>Sike Confessions 2020</Footer>
+          <Footer style={{ textAlign: 'center' }}>Sike Confessions | Hey! I created this website for fun among friends and strangers, feel free to share it among yours! </Footer>
           <ReCaptcha
                     sitekey="6Lc2lOcUAAAAAM6XhdDHUpSoNG1065CW_SiO0lix"
                     action='/'

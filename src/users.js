@@ -9,6 +9,7 @@ import firebase from "firebase/app";
 import 'firebase/auth';
 import {AuthContext} from './auth';
 import app from "./base.js";
+import { loadReCaptcha } from 'react-recaptcha-v3';
 
 var provider = new firebase.auth.GoogleAuthProvider();
 provider.addScope('profile');
@@ -52,7 +53,7 @@ const [confs, newConfs] = useState([])
 
   const { currentUser } = useContext(AuthContext);
 useEffect(() => {
-  if (currentUser) {
+  if (localStorage.getItem("token")) {
     if(localStorage.getItem("user") === props.match.params.userid){
       setuser(true)
       fetch(process.env.REACT_APP_BASEURL+"api/user/getmydata",{
@@ -92,10 +93,10 @@ useEffect(() => {
     }
   }
   else{
-      props.history.push('/')
+      props.history.push("/")
     }
 
-}, [currentUser, props.match.params.userid, props.history, sameuser])
+}, [currentUser, props, sameuser, confs, currentData])
  
 // console.log(props.match.params.userid)
 // console.log(sameuser)
@@ -132,8 +133,10 @@ const sgnout=()=>{
     .catch(error=> console.error(error))
   }
 }
+
+const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7']
     return (
-      <Layout>
+      <Layout className="layout">
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
                 <Menu.Item key="1">
@@ -146,17 +149,16 @@ const sgnout=()=>{
                     <UserOutlined />
                     <span>Profile</span>
                 </Menu.Item>
-                <Menu.Item key="4">
-                    <Button type="dashed" onClick={sgnout}>Sign out</Button>
-                </Menu.Item>
             </Menu>
+            <Button type="dashed" className="loginbutton" onClick={sgnout}>Sign out</Button>
         </Header>
         <Content
-            style={{ padding: '114px 50px 0px 50px' }}
           >
           <div className="site-layout-content">
             <h1>{currentData.name}'s Profile</h1>
             <p>{currentData.bio}</p>
+            <Input />
+            <Button>Update Bio</Button>
             <div className='conf-cont'>
                 <Form onFinish={onFinish} name="conf-form">
                     <Form.Item name="message" rules={[{
@@ -176,14 +178,16 @@ const sgnout=()=>{
                     {
           
                       confs?(
-                      confs.map(con=>(
+                      confs.map(con=>{
+                        let a = Math.random(0,5);
+                        return(
                     <Col xs={20} sm={16} md={12} lg={8} xl={6}>
-                        <Card>
+                        <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
                           <p>{con.confess}</p>
                         </Card>
                     </Col>
 
-                      ))
+                      )})
                     ):<div>You don't have any confessions yet! Share the url on social media to get some!</div>
                       
                     }
@@ -191,7 +195,7 @@ const sgnout=()=>{
             </div>
             </div>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>Sike Confessions 2020</Footer>
+          <Footer style={{ textAlign: 'center' }}>Sike Confessions | Hey! I created this website for fun among friends and strangers, feel free to share it among yours! </Footer>
         </Layout>
     );
   }

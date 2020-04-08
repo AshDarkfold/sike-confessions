@@ -72,7 +72,7 @@ const SiderDemo =(props)=> {
             .then(data => {
                 console.log(data)
                 setUser(data.userId)
-                localStorage.setItem("token", data.User.token);
+                localStorage.setItem("token", data.Token);
                 localStorage.setItem('user', data.userId)
 
             })

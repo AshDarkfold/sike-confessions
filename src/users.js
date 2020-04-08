@@ -73,6 +73,7 @@ useEffect(() => {
       })
     }else{
       setuser(false)
+      console.log(props)
       fetch(process.env.REACT_APP_BASEURL+"api/user/gethisdata/"+props.match.params.userid,{
         headers: new Headers({
           token: localStorage.getItem("token") 

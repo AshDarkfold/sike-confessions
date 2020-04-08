@@ -67,7 +67,7 @@ useEffect(() => {
       props.history.push("/")
     }
 
-}, [currentUser, props, props.history, props.match.params, sameuser, confs, currentData])
+}, [currentUser, props, props.history, props.match.params])
  
 // console.log(props.match.params.userid)
 // console.log(sameuser)

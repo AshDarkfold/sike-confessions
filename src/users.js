@@ -100,7 +100,8 @@ useEffect(() => {
 
 const sgnout=()=>{
   app.auth().signOut().then(function() {
-    // Sign-out successful.
+    // Sign-out successful.\
+    localStorage.removeItem("token")
     props.history.push("/")
   }).catch(function(error) {
     // An error happened.

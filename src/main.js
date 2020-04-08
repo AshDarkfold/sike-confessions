@@ -57,7 +57,7 @@ const SiderDemo =(props)=> {
             body: JSON.stringify(values), // Coordinate the body type with 'Content-Type'
             headers: new Headers({
             'Content-Type': 'application/json',
-            'g-recaptcha-response': setrecapTok
+            'g-recaptcha-response': recaptok
             }),
         }).then(response => {
             if(response.status === 200 || response.status===201 || response.status===202){

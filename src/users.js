@@ -128,7 +128,6 @@ const sgnout=()=>{
     .catch(error=> console.error(error))
   }
 }
-
     return (
       <Layout>
         <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
@@ -171,9 +170,17 @@ const sgnout=()=>{
             <h2>Confessions for you -</h2>
                 <Row gutter={16}>
                     <Col xs={20} sm={16} md={12} lg={8} xl={6}>
-                    <Card title="6/4/2020">
-                        <p>Card content</p>
-                    </Card>
+                    {
+          
+                      confs?(
+                      confs.map(con=>(
+                        <Card>
+                          <p>{con.confess}</p>
+                        </Card>
+                      ))
+                    ):<div>You don't have any confessions yet! Share the url on social media to get some!</div>
+                      
+                    }
                     </Col>
                 </Row>
             </div>

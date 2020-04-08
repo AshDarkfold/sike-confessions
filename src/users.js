@@ -173,19 +173,20 @@ const sgnout=()=>{
             <div className="conf-cards">
             <h2>Confessions for you -</h2>
                 <Row gutter={16}>
-                    <Col xs={20} sm={16} md={12} lg={8} xl={6}>
                     {
           
                       confs?(
                       confs.map(con=>(
+                    <Col xs={20} sm={16} md={12} lg={8} xl={6}>
                         <Card>
                           <p>{con.confess}</p>
                         </Card>
+                    </Col>
+
                       ))
                     ):<div>You don't have any confessions yet! Share the url on social media to get some!</div>
                       
                     }
-                    </Col>
                 </Row>
             </div>
             </div>

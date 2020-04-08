@@ -22,6 +22,9 @@ header .anticon{
 .ant-layout{
   min-height: 100vh;
 }
+.ant-card{
+  min-height: 180px;
+}
 
 main h1{
   font-size: 26px;

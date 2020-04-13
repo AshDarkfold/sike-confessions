@@ -6,7 +6,18 @@ import SiderDemo from './main';
 import Users from './users';
 import {AuthProvider} from './auth';
 import { loadReCaptcha } from 'react-recaptcha-v3';
+import { transitions, positions, Provider as AlertProvider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
 
+
+const options = {
+  // you can also just use 'bottom center'
+  position: positions.BOTTOM_CENTER,
+  timeout: 5000,
+  offset: '30px',
+  // you can also just use 'scale'
+  transition: transitions.SCALE
+}
 
 
 function App() {
@@ -15,11 +26,13 @@ function App() {
   })
   return (
     <AuthProvider>
-        <BrowserRouter>
-          <Route exact path="/" component={SiderDemo} />
-          <Route exact path="/user" component={Users}/>
-          <Route path="/user/:userid" component={Users}/>
-        </BrowserRouter>
+          <BrowserRouter>
+            <AlertProvider template={AlertTemplate} {...options}>
+                <Route exact path="/" component={SiderDemo} />
+                <Route exact path="/user" component={Users}/>
+                <Route path="/user/:userid" component={Users}/>
+            </AlertProvider>
+          </BrowserRouter>
     </AuthProvider>
   );
 }

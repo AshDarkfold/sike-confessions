@@ -11,12 +11,13 @@ import firebase from "firebase/app";
 import 'firebase/auth';
 import 'firebase/firestore';
 import { ReCaptcha } from 'react-recaptcha-v3';
-
+import {useAlert} from 'react-alert'
 
 
 
 
 const SiderDemo =(props)=> {
+  const {alert} = useAlert();
   const [user1, setUser] = useState(null);
   const [recaptok, setrecapTok] = useState(null);
   const [logbtnval, setlogbtn] = useState("Login");
@@ -24,6 +25,7 @@ const SiderDemo =(props)=> {
   const [hour, setHour] = useState(null);
   const [min, setMin] = useState(null);
   const [sec, setSec] = useState(null);
+
 
   const verifyCallback = (recaptchaToken) => {
     // Here you will get the final recaptchaToken!!!  
@@ -115,21 +117,30 @@ const SiderDemo =(props)=> {
 const { currentUser } = useContext(AuthContext);
 
 useEffect(() => {
+
   if(localStorage.getItem("user")){
     setUser(localStorage.getItem("user"))
-  }
-  if(user1){
     setlogbtn("Hey "+localStorage.getItem("name"))
   }else{
     setlogbtn("Login")
   }
-  // setInterval(() => {
-  //   showDate("April 14 2020 15:00:00 GMT+0530");
-  // }, 1000);
-},[user1])
+  // setTimeout(()=>{
+  //   startDate();
+  // }, 1000)
+},[])
+
+// const startDate=()=>{
+//     setInterval(() => {
+//     showDate("April 14 2020 15:00:00 GMT+0530");
+//   }, 1000);
+// }
  
 
-
+const chekLoggedIn=()=>{
+  if(!localStorage.getItem("token")){
+  alert.show("You need to log in to have a profile page!")
+  }
+}
 const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7']
 
     return (
@@ -141,7 +152,7 @@ const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7'
                 <span>SiKe</span>
                 </Menu.Item>
                 <Menu.Item key="2">
-                <NavLink to={'/user/'+user1}>
+                <NavLink to={'/user/'+user1} onClick={chekLoggedIn}>
                     <UserOutlined />
                     <span>Profile</span>
                 </NavLink>
@@ -178,7 +189,7 @@ const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7'
                         <p>I don't know how to start talking to you, your so pretty!</p>
                     </Card>
                     </Col>
-                    <Col xs={20} sm={16} md={12} lg={8} xl={6}>
+                    {/* <Col xs={20} sm={16} md={12} lg={8} xl={6}>
                     <Card style={{backgroundColor:colorz[Math.floor(Math.random() * colorz.length)]}}>
                       <h3>Time until the BIG giveaway! </h3>
                       <p>Days: {day}</p>
@@ -186,7 +197,7 @@ const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7'
                       <p>, Minutes: {min}</p>
                       <p>, Seconds: {sec}</p>
                     </Card>
-                    </Col>
+                    </Col> */}
    
                 </Row>
             </div>

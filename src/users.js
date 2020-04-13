@@ -74,6 +74,8 @@ const sgnout=()=>{
   app.auth().signOut().then(function() {
     // Sign-out successful.\
     localStorage.removeItem("token")
+    localStorage.removeItem("name")
+    localStorage.removeItem("user")
     props.history.push("/")
   }).catch(function(error) {
     // An error happened.

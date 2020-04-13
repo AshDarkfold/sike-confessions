@@ -1,5 +1,5 @@
 import React,{useContext, useCallback, useState, useEffect}  from 'react';
-import { Layout, Menu, Row, Col, Card, Form, Input, Button  } from 'antd';
+import { Layout, Menu, Row, Col, Card, Form, Input, Button, Drawer } from 'antd';
 import {
   UserOutlined,
   HomeTwoTone,
@@ -22,6 +22,7 @@ const [sameuser, setuser] = useState(false)
 const [currentData, newcurrData] = useState([])
 const [confs, newConfs] = useState([])
 const { currentUser } = useContext(AuthContext);
+const [visible, setDrawer] = useState(false) 
 
 useEffect(() => {
   if (currentUser){
@@ -104,7 +105,26 @@ const sgnout=()=>{
     .catch(error=> console.error(error))
   }
 }
-
+const bioOnFinish=(v)=>{
+  let bod = {
+    bio: v.bio
+  }
+  fetch(process.env.REACT_APP_BASEURL+'api/user/addBio',{
+    method: 'POST',
+    body: JSON.stringify(bod),
+    headers: new Headers({
+      'Authorization': localStorage.getItem("token")
+    })
+  })
+  .then(res=>res.json())
+  .then(data=>{
+      console.log(data)
+      alert("Bio updated. Reload to see changes")
+  })
+}
+const onClose=()=>{
+  setDrawer(false)
+}
 const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7']
     return (
       <Layout className="layout">
@@ -128,8 +148,7 @@ const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7'
           <div className="site-layout-content">
             <h1>{currentData.name}'s Profile</h1>
             <p>{currentData.bio}</p>
-            <Input />
-            <Button>Update Bio</Button>
+            <Button onClick={setDrawer(true)}>Update Bio</Button>
             <div className='conf-cont'>
                 <Form onFinish={onFinish} name="conf-form">
                     <Form.Item name="message" rules={[{
@@ -165,6 +184,26 @@ const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7'
                 </Row>
             </div>
             </div>
+            <Drawer
+                placement="right"
+                closable={true}
+                onClose={onClose}
+                visible={visible}
+                width={'300px'}
+                zIndex="1001"
+            >
+              <div>
+                <h2>Edit Bio</h2>
+                <Form onFinish={bioOnFinish}>
+                  <Form.Item name="bio">
+                    <Input placeholder="Something about yourself..."/>
+                  </Form.Item>
+                  <Form.Item>
+                    <Button htmlType="submit" type="dashed">Submit</Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Drawer>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Sike Confessions | Hey! I created this website for fun among friends and strangers, feel free to share it among yours! </Footer>
         </Layout>

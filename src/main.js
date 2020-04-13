@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
-import { Layout, Menu, Row, Col, Card, Button } from 'antd';
+import { Layout, Menu, Row, Col, Card, Button, Alert } from 'antd';
 import {
   UserOutlined,
   HomeTwoTone,
@@ -11,13 +11,11 @@ import firebase from "firebase/app";
 import 'firebase/auth';
 import 'firebase/firestore';
 import { ReCaptcha } from 'react-recaptcha-v3';
-import {useAlert} from 'react-alert'
 
 
 
 
 const SiderDemo =(props)=> {
-  const {alert} = useAlert();
   const [user1, setUser] = useState(null);
   const [recaptok, setrecapTok] = useState(null);
   const [logbtnval, setlogbtn] = useState("Login");
@@ -138,9 +136,10 @@ useEffect(() => {
 
 const chekLoggedIn=()=>{
   if(!localStorage.getItem("token")){
-  alert.show("You need to log in to have a profile page!")
+    alert("You need to log in to be able to access your own profile!")
   }
 }
+
 const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7']
 
     return (
@@ -202,14 +201,16 @@ const colorz = ['#BBB7FF', '#F4B7FF', '#FFB7BF', '#B7ECFF', '#CCFFB7', '#F6FFB7'
                 </Row>
             </div>
           </div>
-           
+
           </Content>
+
           <Footer style={{ textAlign: 'center' }}>Sike Confessions | Hey! I created this website for fun among friends and strangers, feel free to share it among yours! </Footer>
           <ReCaptcha
                     sitekey="6Lc2lOcUAAAAAM6XhdDHUpSoNG1065CW_SiO0lix"
                     action='/'
                     verifyCallback={verifyCallback}
                 />
+
         </Layout>
     );
   }
